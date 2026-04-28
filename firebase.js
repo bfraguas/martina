@@ -1,16 +1,12 @@
-// Firebase SDK via CDN - loaded in index.html before this file
-// This file provides saveData() and subscribeData() functions
-
 const firebaseConfig = {
-  apiKey: "AIzaSyDjuMokvyVNhezvbe__4qOHtbO0vsrPULU",
-  authDomain: "martina-6aa4e.firebaseapp.com",
-  projectId: "martina-6aa4e",
-  storageBucket: "martina-6aa4e.firebasestorage.app",
-  messagingSenderId: "387522578281",
-  appId: "1:387522578281:web:8f890ad4f60ce1d4e35ff8"
+  apiKey: "AIzaSyD-GIZG0VLEtWiHVJ1s-XxufUCbrdNrkuo",
+  authDomain: "martina-6170e.firebaseapp.com",
+  projectId: "martina-6170e",
+  storageBucket: "martina-6170e.firebasestorage.app",
+  messagingSenderId: "424242445464",
+  appId: "1:424242445464:web:28dfd5251dd00520b024ed"
 };
 
-// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
