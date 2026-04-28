@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, user-scalable=no">
+  <meta name="theme-color" content="#e8856a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Martina">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <title>Martina</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { font-size: 16px; -webkit-text-size-adjust: 100%; }
+    body { background: #fdf8f4; font-family: Georgia, serif; -webkit-font-smoothing: antialiased; overscroll-behavior: none; }
+    textarea, input { font-family: Georgia, serif; outline: none; }
+    button { font-family: Georgia, serif; cursor: pointer; }
+    ::-webkit-scrollbar { display: none; }
+
+    #app { max-width: 480px; margin: 0 auto; min-height: 100vh; color: #2d3a4a; }
+
+    /* HEADER */
+    .header { background: linear-gradient(135deg,#fff5f0,#fff0f5); padding: 18px 18px 12px; position: sticky; top: 0; z-index: 50; border-bottom: 1px solid #f0e8df; box-shadow: 0 2px 12px rgba(232,133,106,0.08); }
+    .header-row { display: flex; align-items: center; gap: 12px; }
+    .header-icon { width: 50px; height: 50px; border-radius: 50%; background: linear-gradient(135deg,#ffb3a0,#ff8fab); display: flex; align-items: center; justify-content: center; font-size: 26px; box-shadow: 0 3px 12px rgba(232,133,106,0.35); flex-shrink: 0; }
+    .header-title { font-size: 22px; font-weight: bold; color: #2d3a4a; }
+    .header-sub { font-size: 12px; color: #8a9aaa; }
+    .header-pct { text-align: right; }
+    .pct-badge { border-radius: 20px; padding: 4px 12px; font-size: 13px; font-weight: bold; }
+    .pct-label { font-size: 10px; color: #8a9aaa; margin-top: 2px; }
+    .progress-bar { background: #f0e8df; border-radius: 4px; height: 4px; margin-top: 12px; overflow: hidden; }
+    .progress-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#e8856a,#e86a8a); transition: width .6s ease; }
+    .alert-item { font-size: 11px; padding: 5px 10px; background: #fef7ec; border-radius: 8px; color: #e8a84a; border: 1px solid rgba(232,168,74,0.2); margin-top: 4px; }
+
+    /* TABS */
+    .tabs { display: flex; background: #fff; border-bottom: 1px solid #f0e8df; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+    .tab-btn { flex: 1; padding: 9px 2px; background: transparent; border: none; border-bottom: 3px solid transparent; color: #8a9aaa; font-size: 10px; font-family: Georgia,serif; transition: all .2s; }
+    .tab-btn.active { color: #e8856a; border-bottom-color: #e8856a; }
+    .tab-icon { font-size: 18px; margin-bottom: 2px; }
+
+    /* CONTENT */
+    .content { padding: 16px; padding-bottom: 40px; }
+    .date-label { color: #8a9aaa; font-size: 12px; margin-bottom: 14px; text-transform: capitalize; font-style: italic; }
+    .tomas-banner { padding: 10px 14px; background: linear-gradient(135deg,#fff5f0,#fff0f5); border: 1px solid rgba(232,133,106,0.2); border-radius: 12px; margin-bottom: 16px; font-size: 11px; color: #e8856a; line-height: 1.8; }
+
+    /* DÍAS */
+    .days-row { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 12px; }
+    .day-btn { flex-shrink: 0; padding: 6px 10px; border-radius: 10px; border: 1px solid #f0e8df; background: #fff; color: #8a9aaa; min-width: 56px; text-align: center; font-family: Georgia,serif; font-size: 9px; text-transform: capitalize; }
+    .day-btn.today { background: #fdf0ec; border-color: #e8856a; color: #e8856a; }
+    .day-pct { font-size: 11px; font-weight: bold; margin-top: 1px; }
+
+    /* ITEMS RUTINA */
+    .routine-item { margin-bottom: 8px; border-radius: 14px; overflow: hidden; box-shadow: 0 1px 6px rgba(0,0,0,0.04); border: 1px solid #f0e8df; background: #fff; }
+    .routine-item.done { border-color: transparent; }
+    .routine-main { display: flex; gap: 10px; padding: 12px 14px; cursor: pointer; }
+    .routine-emoji { font-size: 22px; flex-shrink: 0; padding-top: 2px; }
+    .routine-info { flex: 1; }
+    .routine-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+    .routine-time { font-size: 10px; color: #8a9aaa; font-family: monospace; background: #f5eff9; padding: 1px 5px; border-radius: 4px; }
+    .routine-type-badge { font-size: 10px; padding: 1px 7px; border-radius: 10px; }
+    .routine-check-time { font-size: 10px; color: #5db87a; margin-left: auto; font-weight: bold; }
+    .routine-label { font-size: 14px; }
+    .routine-note { font-size: 11px; color: #b0bcc8; margin-top: 2px; line-height: 1.5; }
+    .routine-check { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; flex-shrink: 0; margin-top: 2px; }
+    .routine-obs { padding: 0 14px 12px; }
+    .obs-note { padding: 7px 12px; background: #fff; border-radius: 8px; font-size: 12px; color: #8a9aaa; border-left: 3px solid; line-height: 1.5; cursor: pointer; }
+    .obs-add { padding: 6px 12px; background: #f5eff9; border-radius: 8px; font-size: 11px; color: #b0bcc8; cursor: pointer; border: 1px dashed #f0e8df; }
+
+    /* CARDS generales */
+    .card { background: #fff; border: 1px solid #f0e8df; border-radius: 14px; overflow: hidden; margin-bottom: 10px; box-shadow: 0 1px 6px rgba(0,0,0,0.04); }
+    .card-header { width: 100%; padding: 14px 16px; display: flex; align-items: center; gap: 12px; background: transparent; border: none; color: #2d3a4a; text-align: left; }
+    .card-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; flex-shrink: 0; }
+    .card-title { font-size: 14px; font-weight: bold; color: #2d3a4a; }
+    .card-sub { font-size: 11px; margin-top: 2px; }
+    .card-arrow { color: #b0bcc8; font-size: 16px; margin-left: auto; }
+    .card-body { padding: 0 16px 16px; border-top: 1px solid #f0e8df; font-size: 13px; color: #8a9aaa; line-height: 1.7; }
+
+    /* INFO BANNER */
+    .info-banner { padding: 12px 14px; border-radius: 14px; margin-bottom: 16px; }
+
+    /* VACUNAS / REVISIONES */
+    .health-item { margin-bottom: 8px; background: #fff; border: 2px solid #f0e8df; border-radius: 12px; padding: 12px 14px; }
+    .health-item.done { border-color: rgba(93,184,122,0.33); }
+    .health-item.current { border-color: rgba(232,133,106,0.33); }
+    .health-item.current-purple { border-color: rgba(155,127,232,0.33); }
+    .health-row { display: flex; align-items: flex-start; gap: 10px; }
+    .health-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+    .health-content { flex: 1; }
+    .health-name { font-size: 12px; font-weight: bold; color: #2d3a4a; }
+    .health-desc { font-size: 11px; color: #8a9aaa; line-height: 1.5; margin-top: 2px; }
+    .health-badge { font-size: 10px; padding: 1px 7px; border-radius: 10px; font-weight: bold; margin-left: 6px; }
+    .mark-btn { padding: 5px 10px; font-size: 11px; border: none; border-radius: 8px; }
+
+    /* HITOS */
+    .milestone-item { margin-bottom: 8px; background: #fff; border: 2px solid #f0e8df; border-radius: 14px; overflow: hidden; }
+    .milestone-item.current { border-color: rgba(232,168,74,0.33); }
+    .milestone-item.done { border-color: rgba(93,184,122,0.33); }
+    .milestone-row { display: flex; gap: 10px; padding: 12px 14px; cursor: pointer; }
+    .milestone-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+
+    /* COMPRA */
+    .shop-section { margin-bottom: 16px; }
+    .shop-cat { font-size: 13px; font-weight: bold; margin-bottom: 8px; padding: 7px 12px; border-radius: 10px; display: flex; align-items: center; gap: 6px; }
+    .shop-weekly-badge { font-size: 10px; background: #e8a84a; color: #fff; border-radius: 6px; padding: 1px 6px; font-weight: bold; }
+    .shop-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; margin-bottom: 5px; background: #fff; border: 1px solid #f0e8df; border-radius: 12px; cursor: pointer; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
+    .shop-item.checked { background: #edf7f1; border-color: rgba(93,184,122,0.27); }
+    .shop-checkbox { width: 20px; height: 20px; border-radius: 5px; border: 2px solid #f0e8df; background: transparent; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; flex-shrink: 0; margin-top: 1px; }
+    .shop-checkbox.checked { background: #5db87a; border-color: #5db87a; }
+    .shop-name { font-size: 13px; color: #2d3a4a; }
+    .shop-name.checked { text-decoration: line-through; color: #8a9aaa; }
+    .shop-tip { font-size: 11px; color: #b0bcc8; margin-top: 2px; line-height: 1.4; }
+
+    /* RECORDATORIOS */
+    .rem-input { width: 100%; padding: 9px 12px; background: #f5eff9; border: 1px solid #f0e8df; border-radius: 10px; font-size: 13px; color: #2d3a4a; margin-bottom: 8px; }
+    .rem-row { display: flex; gap: 8px; }
+    .rem-date { flex: 1; padding: 9px 12px; background: #f5eff9; border: 1px solid #f0e8df; border-radius: 10px; font-size: 13px; color: #2d3a4a; font-family: Georgia,serif; }
+    .rem-add { padding: 9px 16px; background: #e8856a; color: #fff; border: none; border-radius: 10px; font-size: 13px; font-weight: bold; }
+    .rem-item { display: flex; align-items: center; gap: 10px; padding: 11px 14px; margin-bottom: 6px; background: #fff; border: 1px solid #f0e8df; border-radius: 12px; }
+    .rem-item.done { background: #edf7f1; }
+    .rem-item.overdue { border-color: #ffdddd; }
+    .rem-check { width: 22px; height: 22px; border-radius: 6px; border: 2px solid #f0e8df; background: transparent; color: #fff; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .rem-check.done { background: #5db87a; border-color: #5db87a; }
+    .rem-title { font-size: 13px; color: #2d3a4a; }
+    .rem-title.done { text-decoration: line-through; color: #8a9aaa; }
+    .rem-date-label { font-size: 10px; color: #8a9aaa; margin-top: 1px; }
+    .rem-del { font-size: 16px; color: #b0bcc8; background: transparent; border: none; padding: 0 4px; }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 100; display: flex; align-items: flex-end; }
+    .modal-box { background: #fff; width: 100%; border-radius: 22px 22px 0 0; padding: 24px; border-top: 3px solid #e8856a; max-height: 80vh; overflow-y: auto; }
+    .modal-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+    .modal-icon { width: 46px; height: 46px; border-radius: 12px; background: #fdf0ec; display: flex; align-items: center; justify-content: center; font-size: 26px; }
+    .modal-title { font-size: 16px; font-weight: bold; color: #2d3a4a; }
+    .modal-sub { font-size: 11px; color: #8a9aaa; }
+    .mood-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .mood-btn { font-size: 24px; background: #f8f8f8; border: 2px solid #f0e8df; border-radius: 12px; padding: 6px 10px; }
+    .mood-btn.selected { background: #fdf0ec; border-color: #e8856a; }
+    .obs-textarea { width: 100%; padding: 12px; background: #f5eff9; border: 1px solid #f0e8df; border-radius: 12px; color: #2d3a4a; font-size: 13px; font-family: Georgia,serif; resize: none; height: 90px; line-height: 1.5; }
+    .modal-btns { display: flex; gap: 10px; margin-top: 14px; }
+    .btn-cancel { flex: 1; padding: 14px; background: #f8f8f8; border: 1px solid #f0e8df; border-radius: 12px; color: #8a9aaa; font-size: 14px; }
+    .btn-confirm { flex: 2; padding: 14px; background: linear-gradient(135deg,#e8856a,#e86a8a); border: none; border-radius: 12px; color: #fff; font-size: 14px; font-weight: bold; box-shadow: 0 4px 14px rgba(232,133,106,0.27); }
+
+    /* HISTORIAL VIENDO */
+    .hist-banner { padding: 8px 12px; background: #fef7ec; border-radius: 10px; margin-bottom: 12px; font-size: 12px; color: #e8a84a; }
+    .hist-link { margin-left: 10px; font-size: 11px; color: #e8856a; background: transparent; border: none; text-decoration: underline; }
+
+    .section-title { font-size: 15px; font-weight: bold; color: #2d3a4a; margin-bottom: 10px; }
+    .section-title-mt { margin-top: 20px; }
+    .empty-msg { text-align: center; color: #b0bcc8; font-size: 13px; padding: 20px; }
+
+    .notes-textarea { width: 100%; margin-top: 6px; padding: 8px; background: #f5eff9; border: 1px solid #f0e8df; border-radius: 8px; font-size: 12px; font-family: Georgia,serif; resize: none; height: 70px; color: #2d3a4a; }
+    .toggle-btn { font-size: 11px; color: #e8856a; background: transparent; border: none; padding: 2px 0; margin-top: 4px; }
+    .more-btn { font-size: 11px; color: #e8856a; background: transparent; border: none; padding: 2px 0; margin-top: 2px; }
+    .reset-btn { font-size: 11px; color: #e86a8a; background: transparent; border: 1px solid rgba(232,106,138,0.27); border-radius: 8px; padding: 4px 10px; }
+    .shop-top { display: flex; justify-content: flex-end; margin-bottom: 10px; }
+
+    .prev-games { margin-top: 6px; }
+    .prev-games-title { font-size: 12px; color: #8a9aaa; margin-bottom: 10px; padding: 0 4px; }
+    .prev-game-group { margin-bottom: 8px; padding: 10px 14px; background: #f5eff9; border-radius: 12px; border: 1px solid #f0e8df; }
+    .prev-game-month { font-size: 11px; color: #8a9aaa; margin-bottom: 6px; font-weight: bold; }
+    .prev-game-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .prev-game-tag { font-size: 12px; padding: 3px 10px; background: #fff; border-radius: 20px; border: 1px solid #f0e8df; color: #8a9aaa; }
+
+    .milestone-desc { font-size: 12px; color: #8a9aaa; line-height: 1.6; margin-top: 6px; }
+    .meses-badge { font-size: 10px; padding: 1px 7px; border-radius: 10px; }
+    .ahora-badge { font-size: 10px; color: #e8a84a; font-weight: bold; margin-left: 4px; }
+    .conseguido-badge { font-size: 10px; color: #5db87a; font-weight: bold; margin-left: auto; }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+<div id="app">
+  <div class="header">
+    <div class="header-row">
+      <div class="header-icon">🌸</div>
+      <div style="flex:1">
+        <div class="header-title">Martina</div>
+        <div class="header-sub" id="age-label">cargando...</div>
+      </div>
+      <div class="header-pct">
+        <div class="pct-badge" id="pct-badge">0%</div>
+        <div class="pct-label">completado hoy</div>
+      </div>
+    </div>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+    <div id="alerts-container"></div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="setTab('hoy')" id="tab-hoy">
+      <div class="tab-icon">📋</div>Hoy
+    </button>
+    <button class="tab-btn" onclick="setTab('juegos')" id="tab-juegos">
+      <div class="tab-icon">🎮</div>Juegos
+    </button>
+    <button class="tab-btn" onclick="setTab('desarrollo')" id="tab-desarrollo">
+      <div class="tab-icon">🌱</div>Hitos
+    </button>
+    <button class="tab-btn" onclick="setTab('salud')" id="tab-salud">
+      <div class="tab-icon">🩺</div>Salud
+    </button>
+    <button class="tab-btn" onclick="setTab('compra')" id="tab-compra">
+      <div class="tab-icon">🛒</div>Compra
+    </button>
+  </div>
+
+  <div id="content-hoy" class="content"></div>
+  <div id="content-juegos" class="content hidden"></div>
+  <div id="content-desarrollo" class="content hidden"></div>
+  <div id="content-salud" class="content hidden"></div>
+  <div id="content-compra" class="content hidden"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay hidden" id="modal" onclick="closeModalOverlay(event)">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-icon" id="modal-icon">🍼</div>
+      <div>
+        <div class="modal-title" id="modal-title"></div>
+        <div class="modal-sub" id="modal-sub"></div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:#8a9aaa;margin-bottom:8px">¿Cómo ha ido?</div>
+    <div class="mood-row" id="mood-row">
+      <button class="mood-btn" onclick="toggleMood('😊')">😊</button>
+      <button class="mood-btn" onclick="toggleMood('😐')">😐</button>
+      <button class="mood-btn" onclick="toggleMood('😢')">😢</button>
+      <button class="mood-btn" onclick="toggleMood('🤒')">🤒</button>
+      <button class="mood-btn" onclick="toggleMood('😴')">😴</button>
+    </div>
+    <div style="font-size:11px;color:#8a9aaa;margin-bottom:6px">📝 Observaciones</div>
+    <textarea class="obs-textarea" id="modal-note" placeholder="Anota algo..."></textarea>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">Cancelar</button>
+      <button class="btn-confirm" onclick="confirmLog()">✓ Completado</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="data.js"></script>
+  <script src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
