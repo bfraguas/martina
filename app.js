@@ -32,8 +32,10 @@ subscribeData(data => {
   renderAll();
 });
 
+// Mark synced after 3s even if Firebase has no data yet
+setTimeout(() => { synced = true; }, 3000);
+
 function scheduleSave() {
-  if (!synced) return;
   if (fromFirebase) { fromFirebase = false; return; }
   clearTimeout(saveTimer);
   saveTimer = setTimeout(() => saveData(state), 500);
